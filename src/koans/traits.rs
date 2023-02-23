@@ -15,7 +15,7 @@ fn implementing_traits() {
         fn full_name(&self) -> String;
     }
 
-    impl Person {
+    impl HasName for Person {
         fn full_name(&self) -> String {
             format!("{} {}", self.first_name, self.last_name)
         }
@@ -53,6 +53,9 @@ fn implementing_traits2() {
     }
 
     impl HasLevel for Character {
+        fn print_level(&self) {
+            println!("{}", self.name)
+        }
         fn level_up(&mut self) -> u16 {
             self.level += 1;
             self.level
@@ -77,6 +80,15 @@ fn creating_traits() {
     let num_one: u16 = 3;
     let num_two: u16 = 4;
 
+    trait IsEvenOrOdd {
+        fn is_even(&self) -> bool;
+    }
+
+    impl IsEvenOrOdd for u16 {
+        fn is_even(&self) -> bool {
+            (self % 2) == 0
+        }
+    }
     fn asserts<T: IsEvenOrOdd>(x: T, y: T) {
         assert!(!x.is_even());
         assert!(y.is_even());
@@ -94,7 +106,7 @@ fn trait_constraints_on_structs() {
         latest_version: T,
     }
 
-    impl<__> Language<T> {
+    impl<T: std::cmp::PartialOrd> Language<T> {
         fn is_stable(&self) -> bool {
             self.latest_version >= self.stable_version
         }
@@ -125,7 +137,7 @@ fn where_clause() {
         }
     }
 
-    fn asserts<T>(x: T, y: T) {
+    fn asserts<T: IsEvenOrOdd>(x: T, y: T) {
         assert!(!x.is_even());
         assert!(y.is_even());
     }
@@ -143,7 +155,7 @@ fn default_functions() {
     trait IsEvenOrOdd {
         fn is_even(&self) -> bool;
         fn is_odd(&self) -> bool {
-            __
+            self.is_even() == false
         }
     }
 
@@ -171,12 +183,12 @@ fn inheritance() {
 
     #[derive(PartialEq)]
     struct Bawks<T> {
-        thingy: T
+        thingy: T,
     }
 
     impl<T: PartialOrd> PartialOrd for Bawks<T> {
         fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            __
+            self.thingy.partial_cmp(&other.thingy)
         }
     }
 
